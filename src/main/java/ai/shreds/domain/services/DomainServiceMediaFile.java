@@ -31,7 +31,7 @@ public class DomainServiceMediaFile {
 
     public void validateFileSize(DomainValueFileSize fileSize) {
         if (fileSize.getValue() > MAX_FILE_SIZE) {
-            throw a DomainExceptionFileTooLarge("File size exceeds the maximum allowed limit of " + MAX_FILE_SIZE + " bytes.");
+            throw new DomainExceptionFileTooLarge("File size exceeds the maximum allowed limit of " + MAX_FILE_SIZE + " bytes.");
         }
     }
 

@@ -42,8 +42,8 @@ public class ApplicationServiceTemporaryStorage implements ApplicationOutputPort
 
             return storagePath.toString();
         } catch (IOException e) {
-            logger.error('Failed to store file temporarily', e);
-            throw new RuntimeException('Failed to store file temporarily', e);
+            logger.error("Failed to store file temporarily", e);
+            throw new RuntimeException("Failed to store file temporarily", e);
         }
     }
 }

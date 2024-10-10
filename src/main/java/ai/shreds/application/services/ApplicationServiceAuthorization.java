@@ -21,7 +21,8 @@ public class ApplicationServiceAuthorization implements ApplicationOutputPortAut
         try {
             return authorizationServiceClient.checkUploadPermission(userId);
         } catch (Exception e) {
-            throw new ApplicationExceptionAuthorization("Authorization failed", e);
+            // Handle the exception by throwing a new ApplicationExceptionAuthorization with an error code
+            throw new ApplicationExceptionAuthorization("Authorization failed", 500, e);
         }
     }
 }

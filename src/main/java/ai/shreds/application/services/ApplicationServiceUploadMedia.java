@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Service
 public class ApplicationServiceUploadMedia implements ApplicationInputPortUploadMedia {
@@ -56,11 +56,11 @@ public class ApplicationServiceUploadMedia implements ApplicationInputPortUpload
         String authToken = params.getAuthToken();
 
         if (file == null || file.isEmpty()) {
-            throw new ApplicationExceptionValidation('Media file must not be null or empty.', 400);
+            throw new ApplicationExceptionValidation("Media file must not be null or empty.", 400);
         }
 
-        if (authToken == null or authToken.isEmpty()) {
-            throw new ApplicationExceptionAuthentication('Authentication token must not be null or empty.', 401);
+        if (authToken == null || authToken.isEmpty()) {
+            throw new ApplicationExceptionAuthentication("Authentication token must not be null or empty.", 401);
         }
 
         SharedUserDTO user = authenticationService.validateAuthToken(authToken);
@@ -68,7 +68,7 @@ public class ApplicationServiceUploadMedia implements ApplicationInputPortUpload
         boolean hasPermission = authorizationService.checkUploadPermission(user.getUserId());
 
         if (!hasPermission) {
-            throw new ApplicationExceptionAuthorization('You do not have permission to upload media.', 403);
+            throw new ApplicationExceptionAuthorization("You do not have permission to upload media.", 403);
         }
 
         DomainValueFileName fileName = new DomainValueFileName(file.getOriginalFilename());
@@ -80,9 +80,9 @@ public class ApplicationServiceUploadMedia implements ApplicationInputPortUpload
         mediaFile.setFileName(fileName);
         mediaFile.setFileType(fileType);
         mediaFile.setFileSize(fileSize);
-        mediaFile.setUploadTimestamp(new Date());
+        mediaFile.setUploadTimestamp(LocalDateTime.now()); // Fixed to use LocalDateTime
         mediaFile.setUserId(user.getUserId());
-        mediaFile.setUploadStatus('pending');
+        mediaFile.setUploadStatus("pending");
 
         try {
             domainServiceMediaFile.validateMediaFile(mediaFile);
@@ -102,7 +102,6 @@ public class ApplicationServiceUploadMedia implements ApplicationInputPortUpload
         metadataDTO.setUploadTimestamp(mediaFile.getUploadTimestamp());
         metadataDTO.setUserId(mediaFile.getUserId());
         metadataDTO.setTemporaryStoragePath(temporaryStoragePath);
-        metadataDTO.setUploadStatus(mediaFile.getUploadStatus());
 
         String temporaryMediaId = mediaMetadataService.createMediaMetadata(metadataDTO);
 
@@ -110,8 +109,8 @@ public class ApplicationServiceUploadMedia implements ApplicationInputPortUpload
 
         SharedMediaUploadResponseDTO responseDTO = new SharedMediaUploadResponseDTO();
 
-        responseDTO.setStatus('success');
-        responseDTO.setMessage('Media uploaded successfully.');
+        responseDTO.setStatus("success");
+        responseDTO.setMessage("Media uploaded successfully.");
         responseDTO.setTemporaryMediaId(temporaryMediaId);
         responseDTO.setUploadStatus(mediaFile.getUploadStatus());
 

@@ -10,6 +10,11 @@ public class ApplicationExceptionAuthorization extends SharedExceptionAuthorizat
         super(message, errorCode);
     }
 
+    public ApplicationExceptionAuthorization(String message, int errorCode, Throwable cause) {
+        super(message, errorCode);
+        initCause(cause);
+    }
+
     @Override
     public String getMessage() {
         return super.getMessage();

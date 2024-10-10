@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class SharedMediaMetadataDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private String temporaryMediaId;
     private String fileName;
     private String fileType;
     private Long fileSize;

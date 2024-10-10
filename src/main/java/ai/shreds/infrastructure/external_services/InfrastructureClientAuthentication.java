@@ -10,9 +10,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.GetMapping;
 import feign.FeignException;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @Service
 public class InfrastructureClientAuthentication implements ApplicationOutputPortAuthentication {
@@ -28,18 +25,16 @@ public class InfrastructureClientAuthentication implements ApplicationOutputPort
         try {
             AuthenticationServiceResponse response = authenticationServiceFeignClient.validateToken(token);
             if (response.isValid()) {
-                SharedUserDTO userDTO = new SharedUserDTO();
-                userDTO.setUserId(response.getUserId());
-                userDTO.setUsername(response.getUsername());
-                userDTO.setRoles(response.getRoles());
-                return userDTO;
+                return new SharedUserDTO(response.getUserId(), response.getUsername(), response.getRoles());
             } else {
                 throw new ApplicationExceptionAuthentication("Authentication failed. Invalid or expired token.", 401);
             }
         } catch (FeignException e) {
-            throw new InfrastructureExceptionNetworkError("Network error occurred while communicating with Authentication Service.");
+            throw new InfrastructureExceptionNetworkError("Network error occurred while communicating with Authentication Service.", e);
+        } catch (ApplicationExceptionAuthentication e) {
+            throw e; // Re-throw the specific application exception
         } catch (Exception e) {
-            throw new ApplicationExceptionAuthentication("Authentication failed. Invalid or expired token.", 401);
+            throw new ApplicationExceptionAuthentication("An unexpected error occurred during authentication.", 500, e);
         }
     }
 }
@@ -48,13 +43,4 @@ public class InfrastructureClientAuthentication implements ApplicationOutputPort
 interface AuthenticationServiceFeignClient {
     @GetMapping("/validate-token")
     AuthenticationServiceResponse validateToken(@RequestHeader("Authorization") String token);
-}
-
-@Data
-@AllArgsConstructor
-public class AuthenticationServiceResponse {
-    private boolean valid;
-    private String userId;
-    private String username;
-    private List<String> roles;
 }

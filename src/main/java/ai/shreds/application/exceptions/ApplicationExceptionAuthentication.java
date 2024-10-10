@@ -8,6 +8,10 @@ public class ApplicationExceptionAuthentication extends SharedExceptionAuthentic
         super(message, errorCode);
     }
 
+    public ApplicationExceptionAuthentication(String message, int errorCode, Throwable cause) {
+        super(message, errorCode, cause);
+    }
+
     @Override
     public String getMessage() {
         return super.getMessage();
